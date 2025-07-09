@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: auction-service
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5433/auction_db
+    username: auction_user
+    password: auction_pass
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  
+  flyway:
+    enabled: false
+  
+  data:
+    redis:
+      host: localhost
+      port: 6380
+      password: redis_password
+    
+    elasticsearch:
+      repositories:
+        enabled: false
+  
+  rabbitmq:
+    host: localhost
+    port: 5673
+    username: rabbit_user
+    password: rabbit_pass
+  
+  security:
+    enabled: false
+
+server:
+  port: 8081
+
+# Disable Eureka for local development
+eureka:
+  client:
+    enabled: false
+
+# Simplified logging
+logging:
+  level:
+    com.auctionaggregator: DEBUG
+    org.springframework.web: INFO
