@@ -20,6 +20,8 @@ export interface Auction {
   tags?: string[]
   createdAt: string
   updatedAt: string
+  sourceUrl?: string
+  sourcePdfUrl?: string
 }
 
 export interface AuctionImage {

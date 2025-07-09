@@ -21,6 +21,8 @@ public class Auction {
     private List<AuctionImage> images;
     private List<String> tags;
     private String location;
+    private String sourceUrl;
+    private String sourcePdfUrl;
 
     // Constructors
     public Auction() {}
@@ -96,4 +98,10 @@ public class Auction {
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
+    
+    public String getSourceUrl() { return sourceUrl; }
+    public void setSourceUrl(String sourceUrl) { this.sourceUrl = sourceUrl; }
+    
+    public String getSourcePdfUrl() { return sourcePdfUrl; }
+    public void setSourcePdfUrl(String sourcePdfUrl) { this.sourcePdfUrl = sourcePdfUrl; }
 }

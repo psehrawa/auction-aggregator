@@ -21,6 +21,7 @@ export const additionalMockAuctions: Auction[] = [
     tags: ['electronics', 'laptops', 'government', 'kolkata'],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    sourceUrl: 'https://eprocure.gov.in/eprocure/app',
   },
   {
     id: 'GOV-2024-006',

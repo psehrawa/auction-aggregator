@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+import java.net.URL;
 
 @RestController
 @RequestMapping("/api/v1/scrapers/real")
@@ -210,6 +211,113 @@ public class RealScraperController {
         results.put("note", "These are example configurations. Actual scraping requires real URLs and may need site-specific adjustments.");
         
         return ResponseEntity.ok(results);
+    }
+
+    /**
+     * Scrape and import auction data directly
+     */
+    @PostMapping("/scrape-and-import")
+    public ResponseEntity<Map<String, Object>> scrapeAndImport(@RequestBody ScrapeRequest request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // First scrape the URL
+            WebScraperService.ScrapedData scrapedData = scraperService.scrapeWebsite(
+                request.getUrl(), 
+                request.getOptions()
+            );
+            
+            // Create auction from scraped data
+            com.auctionaggregator.model.Auction auction = new com.auctionaggregator.model.Auction();
+            auction.setId("AUC-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
+            auction.setTitle(scrapedData.extractedData.getOrDefault("title", "Unknown Auction"));
+            auction.setDescription(scrapedData.extractedData.getOrDefault("description", scrapedData.content));
+            auction.setCategoryId(detectCategory(auction.getTitle() + " " + auction.getDescription()));
+            
+            // Parse price
+            String priceStr = scrapedData.extractedData.get("price");
+            java.math.BigDecimal price = java.math.BigDecimal.ZERO;
+            if (priceStr != null) {
+                try {
+                    price = new java.math.BigDecimal(priceStr.replaceAll("[^0-9.]", ""));
+                } catch (Exception e) {
+                    price = new java.math.BigDecimal("1000000"); // Default price
+                }
+            }
+            auction.setStartingPrice(price);
+            auction.setCurrentPrice(price);
+            auction.setBidIncrement(new java.math.BigDecimal("10000"));
+            
+            // Set times
+            auction.setStartTime(LocalDateTime.now());
+            auction.setEndTime(LocalDateTime.now().plusDays(7));
+            auction.setStatus("ACTIVE");
+            auction.setSellerId("SCRAPED-" + new URL(request.getUrl()).getHost());
+            auction.setSellerName("Web Scraped Auction");
+            auction.setViewCount(0);
+            
+            // Process images
+            List<com.auctionaggregator.model.AuctionImage> images = new ArrayList<>();
+            if (scrapedData.images != null && !scrapedData.images.isEmpty()) {
+                for (int i = 0; i < Math.min(5, scrapedData.images.size()); i++) {
+                    com.auctionaggregator.model.AuctionImage img = new com.auctionaggregator.model.AuctionImage();
+                    img.setId(UUID.randomUUID().toString());
+                    img.setUrl(scrapedData.images.get(i));
+                    img.setPrimary(i == 0);
+                    images.add(img);
+                }
+            }
+            auction.setImages(images);
+            auction.setTags(extractTags(auction.getTitle(), auction.getDescription()));
+            auction.setLocation(extractLocation(auction.getTitle(), auction.getDescription()));
+            auction.setSourceUrl(request.getUrl()); // Set the source URL
+            
+            // Store the auction (in real app, this would save to database)
+            response.put("auction", auction);
+            response.put("status", "success");
+            response.put("message", "Auction imported successfully");
+            
+        } catch (Exception e) {
+            log.severe("Error in scrape and import: " + e.getMessage());
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+        }
+        
+        return ResponseEntity.ok(response);
+    }
+    
+    private List<String> extractTags(String title, String description) {
+        List<String> tags = new ArrayList<>();
+        String combined = (title + " " + description).toLowerCase();
+        
+        // Location tags
+        if (combined.contains("mumbai")) tags.add("Mumbai");
+        if (combined.contains("delhi")) tags.add("Delhi");
+        if (combined.contains("bangalore") || combined.contains("bengaluru")) tags.add("Bangalore");
+        if (combined.contains("chennai")) tags.add("Chennai");
+        if (combined.contains("kolkata")) tags.add("Kolkata");
+        
+        // Property tags
+        if (combined.contains("commercial")) tags.add("Commercial");
+        if (combined.contains("residential")) tags.add("Residential");
+        if (combined.contains("flat") || combined.contains("apartment")) tags.add("Flat");
+        if (combined.contains("plot") || combined.contains("land")) tags.add("Land");
+        
+        return tags;
+    }
+    
+    private String extractLocation(String title, String description) {
+        String combined = (title + " " + description).toLowerCase();
+        
+        if (combined.contains("mumbai")) return "Mumbai, Maharashtra";
+        if (combined.contains("delhi")) return "Delhi";
+        if (combined.contains("bangalore") || combined.contains("bengaluru")) return "Bangalore, Karnataka";
+        if (combined.contains("chennai")) return "Chennai, Tamil Nadu";
+        if (combined.contains("kolkata")) return "Kolkata, West Bengal";
+        if (combined.contains("pune")) return "Pune, Maharashtra";
+        if (combined.contains("hyderabad")) return "Hyderabad, Telangana";
+        
+        return "India";
     }
 
     /**

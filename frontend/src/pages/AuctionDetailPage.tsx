@@ -26,6 +26,8 @@ import {
   Gavel,
   LocationOn,
   Category,
+  OpenInNew,
+  Description,
 } from '@mui/icons-material'
 import { formatCurrency, formatDate } from '@/utils/format'
 import { useGetAuctionQuery } from '@/store/api/auctionApi'
@@ -192,6 +194,24 @@ const AuctionDetailPage = () => {
               <Button variant="outlined" startIcon={<FavoriteBorder />}>
                 Watch
               </Button>
+              {(auction as any).sourceUrl && (
+                <Button
+                  variant="outlined"
+                  startIcon={<OpenInNew />}
+                  onClick={() => window.open((auction as any).sourceUrl, '_blank')}
+                >
+                  View Source
+                </Button>
+              )}
+              {(auction as any).sourcePdfUrl && (
+                <Button
+                  variant="outlined"
+                  startIcon={<Description />}
+                  onClick={() => window.open((auction as any).sourcePdfUrl, '_blank')}
+                >
+                  PDF
+                </Button>
+              )}
               <IconButton>
                 <Share />
               </IconButton>
