@@ -19,7 +19,7 @@ import HeroSection from '@/components/home/HeroSection'
 import { 
   useGetTrendingAuctionsQuery,
   useGetEndingSoonAuctionsQuery,
-  allMockAuctions 
+  useGetAuctionsQuery
 } from '@/store/api/auctionApi'
 
 const HomePage = () => {
