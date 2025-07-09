@@ -23,6 +23,10 @@ public class Auction {
     private String location;
     private String sourceUrl;
     private String sourcePdfUrl;
+    private String auctionType;
+    private int watcherCount;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     // Constructors
     public Auction() {}
@@ -104,4 +108,16 @@ public class Auction {
     
     public String getSourcePdfUrl() { return sourcePdfUrl; }
     public void setSourcePdfUrl(String sourcePdfUrl) { this.sourcePdfUrl = sourcePdfUrl; }
+    
+    public String getAuctionType() { return auctionType; }
+    public void setAuctionType(String auctionType) { this.auctionType = auctionType; }
+    
+    public int getWatcherCount() { return watcherCount; }
+    public void setWatcherCount(int watcherCount) { this.watcherCount = watcherCount; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

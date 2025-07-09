@@ -5,7 +5,7 @@ export interface Auction {
   sellerId: string
   categoryId: string
   status: 'DRAFT' | 'SCHEDULED' | 'ACTIVE' | 'ENDING_SOON' | 'ENDED' | 'SOLD' | 'CANCELLED'
-  auctionType: 'STANDARD' | 'RESERVE' | 'ABSOLUTE' | 'SEALED_BID' | 'DUTCH' | 'PENNY'
+  auctionType?: 'STANDARD' | 'RESERVE' | 'ABSOLUTE' | 'SEALED_BID' | 'DUTCH' | 'PENNY'
   startingPrice: number
   reservePrice?: number
   currentPrice: number
@@ -14,12 +14,12 @@ export interface Auction {
   startTime: string
   endTime: string
   viewCount: number
-  watcherCount: number
+  watcherCount?: number
   images?: AuctionImage[]
   bids?: Bid[]
   tags?: string[]
-  createdAt: string
-  updatedAt: string
+  createdAt?: string
+  updatedAt?: string
   sourceUrl?: string
   sourcePdfUrl?: string
 }

@@ -270,6 +270,10 @@ public class RealScraperController {
             auction.setTags(extractTags(auction.getTitle(), auction.getDescription()));
             auction.setLocation(extractLocation(auction.getTitle(), auction.getDescription()));
             auction.setSourceUrl(request.getUrl()); // Set the source URL
+            auction.setAuctionType("STANDARD");
+            auction.setWatcherCount(0);
+            auction.setCreatedAt(LocalDateTime.now());
+            auction.setUpdatedAt(LocalDateTime.now());
             
             // Store the auction (in real app, this would save to database)
             response.put("auction", auction);

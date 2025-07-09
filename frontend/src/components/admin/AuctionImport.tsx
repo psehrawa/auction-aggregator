@@ -198,7 +198,7 @@ const AuctionImport = () => {
       </Alert>
 
       <Paper sx={{ mb: 3 }}>
-        <Tabs value={selectedTab} onChange={(e, v) => setSelectedTab(v)}>
+        <Tabs value={selectedTab} onChange={(_, v) => setSelectedTab(v)}>
           <Tab 
             label={
               <Badge badgeContent={pendingAuctions.length} color="warning">

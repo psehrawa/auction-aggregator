@@ -16,22 +16,13 @@ import {
   AccordionDetails,
   FormControlLabel,
   Switch,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
   IconButton,
-  Tooltip,
 } from '@mui/material'
 import {
   PlayArrow,
   ExpandMore,
   ContentCopy,
   CheckCircle,
-  Error,
-  Info,
-  Add,
-  Delete,
 } from '@mui/icons-material'
 
 interface ScrapeOptions {
@@ -149,8 +140,8 @@ const RealTimeScraper = () => {
       } else {
         setError(data.message || 'Scraping failed')
       }
-    } catch (err) {
-      setError(`Error: ${err.message}`)
+    } catch (err: any) {
+      setError(`Error: ${err.message || err}`)
     } finally {
       setScraping(false)
     }
@@ -352,7 +343,7 @@ const RealTimeScraper = () => {
                             <strong>Images Found:</strong> {result.auctionData.images.length}
                           </Typography>
                           <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
-                            {result.auctionData.images.slice(0, 3).map((img, idx) => (
+                            {result.auctionData.images.slice(0, 3).map((img: string, idx: number) => (
                               <img 
                                 key={idx} 
                                 src={img} 
