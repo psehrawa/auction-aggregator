@@ -2,6 +2,8 @@ package com.auctionaggregator.controller;
 
 import com.auctionaggregator.model.Auction;
 import com.auctionaggregator.model.AuctionImage;
+import com.auctionaggregator.service.AuctionSourceService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,10 +19,18 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 public class AuctionController {
 
+    @Autowired
+    private AuctionSourceService sourceService;
+
     private final List<Auction> mockAuctions;
 
     public AuctionController() {
-        this.mockAuctions = createMockAuctions();
+        this.mockAuctions = new ArrayList<>();
+    }
+    
+    @jakarta.annotation.PostConstruct
+    public void init() {
+        this.mockAuctions.addAll(createMockAuctions());
     }
 
     @GetMapping
@@ -96,8 +106,8 @@ public class AuctionController {
         a1.setStartTime(LocalDateTime.now().minusDays(2));
         a1.setEndTime(LocalDateTime.now().plusDays(3));
         a1.setStatus("ACTIVE");
-        a1.setSellerId("seller1");
-        a1.setSellerName("TechDeals Mumbai");
+        a1.setSellerId("GOV-MUM");
+        a1.setSellerName("Government e-Marketplace Mumbai");
         a1.setViewCount(125);
         a1.setWatcherCount(12);
         a1.setAuctionType("STANDARD");
@@ -106,6 +116,12 @@ public class AuctionController {
         a1.setLocation("Mumbai, Maharashtra");
         a1.setCreatedAt(LocalDateTime.now().minusDays(5));
         a1.setUpdatedAt(LocalDateTime.now().minusDays(1));
+        
+        // Add source URLs
+        AuctionSourceService.SourceInfo source = sourceService.getSourceForAuction(a1.getCategoryId(), a1.getSellerId());
+        a1.setSourceUrl(source.url);
+        a1.setSourcePdfUrl(source.pdfUrl);
+        
         auctions.add(a1);
 
         
@@ -129,8 +145,8 @@ public class AuctionController {
                     auction.setStartTime(LocalDateTime.now().minusDays(1));
                     auction.setEndTime(LocalDateTime.now().plusHours(6));
                     auction.setStatus("ENDING_SOON");
-                    auction.setSellerId("seller2");
-                    auction.setSellerName("CarMax Delhi");
+                    auction.setSellerId("MSTC-VEH");
+                    auction.setSellerName("MSTC Vehicle Auctions");
                     auction.setViewCount(89);
                     auction.setWatcherCount(15);
                     auction.setImages(Arrays.asList(new AuctionImage("https://picsum.photos/600/400?random=2", true)));
@@ -146,8 +162,8 @@ public class AuctionController {
                     auction.setBidIncrement(new BigDecimal("2000"));
                     auction.setStartTime(LocalDateTime.now().minusDays(3));
                     auction.setEndTime(LocalDateTime.now().plusDays(4));
-                    auction.setSellerId("seller3");
-                    auction.setSellerName("Government Surplus");
+                    auction.setSellerId("GOV-BLR");
+                    auction.setSellerName("Central Government Surplus");
                     auction.setViewCount(156);
                     auction.setWatcherCount(23);
                     auction.setImages(Arrays.asList(new AuctionImage("https://picsum.photos/600/400?random=3", true)));
@@ -241,6 +257,15 @@ public class AuctionController {
                     auction.setLocation("Jaipur, Rajasthan");
                     break;
             }
+            
+            // Add source URLs for each auction
+            AuctionSourceService.SourceInfo auctionSource = sourceService.getSourceForAuction(
+                auction.getCategoryId(), 
+                auction.getSellerId()
+            );
+            auction.setSourceUrl(auctionSource.url);
+            auction.setSourcePdfUrl(auctionSource.pdfUrl);
+            
             auctions.add(auction);
         }
         

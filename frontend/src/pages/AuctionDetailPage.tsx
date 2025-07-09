@@ -17,6 +17,7 @@ import {
   IconButton,
   Tabs,
   Tab,
+  Tooltip,
 } from '@mui/material'
 import {
   Timer,
@@ -190,27 +191,37 @@ const AuctionDetailPage = () => {
               </Box>
             )}
 
-            <Box sx={{ display: 'flex', gap: 1 }}>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
               <Button variant="outlined" startIcon={<FavoriteBorder />}>
                 Watch
               </Button>
               {(auction as any).sourceUrl && (
-                <Button
-                  variant="outlined"
-                  startIcon={<OpenInNew />}
-                  onClick={() => window.open((auction as any).sourceUrl, '_blank')}
-                >
-                  View Source
-                </Button>
+                <Tooltip title={`View original listing at ${new URL((auction as any).sourceUrl).hostname}`}>
+                  <Button
+                    variant="contained"
+                    color="info"
+                    startIcon={<OpenInNew />}
+                    onClick={() => window.open((auction as any).sourceUrl, '_blank')}
+                    sx={{ 
+                      background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                      boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+                    }}
+                  >
+                    View Original
+                  </Button>
+                </Tooltip>
               )}
               {(auction as any).sourcePdfUrl && (
-                <Button
-                  variant="outlined"
-                  startIcon={<Description />}
-                  onClick={() => window.open((auction as any).sourcePdfUrl, '_blank')}
-                >
-                  PDF
-                </Button>
+                <Tooltip title="Download official auction document">
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    startIcon={<Description />}
+                    onClick={() => window.open((auction as any).sourcePdfUrl, '_blank')}
+                  >
+                    Download PDF
+                  </Button>
+                </Tooltip>
               )}
               <IconButton>
                 <Share />
@@ -252,6 +263,18 @@ const AuctionDetailPage = () => {
                     </Box>
                   </Grid>
                 </Grid>
+                
+                {/* Source Attribution */}
+                {((auction as any).sourceUrl || (auction as any).sourcePdfUrl) && (
+                  <Box sx={{ mt: 3, p: 2, bgcolor: 'info.light', borderRadius: 1 }}>
+                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                      Source Information
+                    </Typography>
+                    <Typography variant="body2">
+                      This auction is sourced from an official platform. Click the "View Original" button above to see the complete listing on the source website.
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             </TabPanel>
 

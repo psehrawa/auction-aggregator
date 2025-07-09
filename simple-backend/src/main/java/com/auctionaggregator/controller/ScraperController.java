@@ -34,6 +34,8 @@ public class ScraperController {
         public String status;
         public String scrapedAt;
         public String imageUrl;
+        public String sourceUrl;
+        public String sourcePdfUrl;
     }
 
     private static class ScraperStats {
@@ -157,6 +159,28 @@ public class ScraperController {
         auction.status = status;
         auction.scrapedAt = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         auction.imageUrl = "https://picsum.photos/200/150?random=" + id;
+        
+        // Add source URLs based on the source
+        switch (source) {
+            case "SBI Auctions":
+                auction.sourceUrl = "https://www.sbi.co.in/web/sbi-in-the-news/auction-notices";
+                auction.sourcePdfUrl = "https://www.sbi.co.in/documents/16012/25493050/Auction_Notice_Properties.pdf";
+                break;
+            case "HDFC Bank E-Auctions":
+                auction.sourceUrl = "https://www.hdfcbank.com/personal/resources/rates-charges/auction-notices";
+                break;
+            case "ICICI Bank Properties":
+                auction.sourceUrl = "https://www.icicibank.com/managed-assets/docs/about-us/notice-auction.page";
+                auction.sourcePdfUrl = "https://www.icicibank.com/managed-assets/docs/about-us/notice-auction.pdf";
+                break;
+            case "Bajaj Finance Auctions":
+                auction.sourceUrl = "https://www.bajajfinserv.in/insights/auctions";
+                break;
+            default:
+                auction.sourceUrl = "https://www.mstcecommerce.com/auctionhome/index.jsp";
+                break;
+        }
+        
         return auction;
     }
 }
