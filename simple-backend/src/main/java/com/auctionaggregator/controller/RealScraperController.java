@@ -261,7 +261,6 @@ public class RealScraperController {
             if (scrapedData.images != null && !scrapedData.images.isEmpty()) {
                 for (int i = 0; i < Math.min(5, scrapedData.images.size()); i++) {
                     com.auctionaggregator.model.AuctionImage img = new com.auctionaggregator.model.AuctionImage();
-                    img.setId(UUID.randomUUID().toString());
                     img.setUrl(scrapedData.images.get(i));
                     img.setPrimary(i == 0);
                     images.add(img);
